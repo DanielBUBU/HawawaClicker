@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Hawawa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <script src="./script/icon.js"></script>
+</head>
+
+<body id="body">
+
+    <div id="content">
+        <h1>Welcome to Hawawa</h1>
+        <hr id="subtitle-seperator" />
+        <h2>
+            The website for Paddinton, <del>the first station you've been! はわわ!!!</del>.
+        </h2>
+        <div id="counter-container">
+            <p>The PDTN has been squished</p>
+            <br />
+            <br />
+            <p id="counter">0</p>
+            <br />
+            <br />
+            <p id="counter-times">times</p>
+            <button id="counter-button" onclick="counterClick()">
+                はわわ
+            </button>
+        </div>
+        <hr />
+        <div id="grid">
+            <noscript>Your browser does not support JavaScript or JavaScript has been
+                disabled.<br />This website relies on JavaScript, so please enable it
+                or use another browser.</noscript>
+        </div>
+    </div>
+    <div id="footer">
+        <img id="herta-card" loading="lazy" src="img/card.jpg" alt="" />
+        <div id="footer-text">
+            <p>Pic sauces:</p>
+            <p>
+                <a href="https://www.pixiv.net/artworks/99615586" target="_blank">
+                    <iconify-icon icon="simple-icons:pixiv" id="pixiv-footer-icon"
+                        class="footer-icon"></iconify-icon><span class="footer-icon-text">浦口ひいろ</span></a>
+            </p>
+            <p>
+                Gotta add more files
+            </p>
+            <p id="footer-repository-text">
+                You can get sauce code here:
+            </p>
+            <p>
+                <a href="https://github.com/DanielBUBU/HawawaClicker" target="_blank">
+                    <iconify-icon icon="mdi:github" id="github-footer-icon" class="footer-icon"></iconify-icon><span
+                        class="footer-icon-text">PDTNHawawa repo</span></a>
+            </p>
+            <p id="footer-repository-text">
+                Program reference here:
+            </p>
+            <p>
+                <a href="https://github.com/duiqt/herta.kuru" target="_blank">
+                    <iconify-icon icon="mdi:github" id="github-footer-icon" class="footer-icon"></iconify-icon><span
+                        class="footer-icon-text">herta_kuru repo</span></a>
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    //varible
+    const fileNum = 13;
+    var audioList = [];
+    for (let index = 0; index < fileNum; index++) {
+        audioList.push(new Audio("audio/hawawa"+index+".wav"))
+    }
+    document.body.onload = addElement;
+    const picNum = 12;
+
+    function addElement() {
+        for (let index = 1; index <= picNum; index++) {
+
+            // create a new div element
+            const newImg = document.createElement("img");
+            newImg.setAttribute("src", "img/Paddington" + index + ".webp");
+            newImg.setAttribute("class", "preload");
+
+            // add the text node to the newly created div
+            document.body.appendChild(newImg);
+
+        }
+
+    }
+
+    for (const audio of audioList) {
+        audio.preload = "auto";
+    }
+
+    let firstSquish = true;
+    //end varible
+
+    if (!localStorage.getItem("count")) {
+        localStorage.setItem("count", 0);
+    }
+
+    let temporaryCounter = parseInt(localStorage.getItem("count"));
+    const counterElement = document.getElementById("counter");
+    const counterTimesElement = document.getElementById("counter-times");
+
+    displayCounter(temporaryCounter);
+
+    //counter button
+    function counterClick() {
+        ++temporaryCounter;
+        displayCounter(temporaryCounter);
+        localStorage.setItem("count", temporaryCounter);
+
+        playSound();
+        animatePics();
+    }
+
+    function displayCounter(value) {
+        counterElement.innerText = value;
+        counterTimesElement.innerText = value === 1 ? "time" : "times";
+    }
+
+    function playSound() {
+        let audio;
+
+        if (firstSquish) {
+            firstSquish = false;
+            audio = audioList[0].cloneNode();
+        } else {
+            const random = Math.floor(Math.random() * fileNum) ;
+            audio = audioList[random].cloneNode();
+        }
+
+        audio.play();
+
+        audio.addEventListener("ended", function () {
+            this.remove();
+        });
+    }
+
+    function animatePics() {
+        const counter_button = document.getElementById("counter-button");
+        let id = null;
+
+        const random = Math.floor(Math.random() * picNum) + 1;
+        const elem = document.createElement("img");
+        elem.src = `img/Paddington${random}.webp`;
+        elem.style.position = "absolute";
+        elem.style.right = "-500px";
+        elem.style.top = counter_button.getClientRects()[0].bottom + scrollY - 300 + "px"
+        elem.style.zIndex = "-1";
+        document.body.appendChild(elem);
+
+        let pos = -500;
+        const limit = window.innerWidth + 500;
+        clearInterval(id);
+        id = setInterval(() => {
+            if (pos >= limit) {
+                clearInterval(id);
+                elem.remove()
+            } else {
+                pos += 20;
+                elem.style.right = pos + 'px';
+            }
+        }, 12);
+    }
+    //end counter button
+</script>
